@@ -1,0 +1,3 @@
+﻿DROP TABLE IF EXISTS "Record";
+DROP TABLE IF EXISTS "Cities";
+DROP TABLE IF EXISTS "__EFMigrationsHistory";
