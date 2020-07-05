@@ -41,7 +41,7 @@ namespace Laci
             .AddCookie("Cookies")
             .AddOpenIdConnect("oidc", options =>
             {
-                options.Authority = "http://localhost:5000";
+                options.Authority = Configuration["OIDC:Authority"];
                 options.ClientId = Configuration["OIDC:ClientId"];
                 options.ClientSecret = Configuration["OIDC:ClientSecret"];
                 options.ResponseType = "code";
@@ -51,6 +51,9 @@ namespace Laci
                     options.RequireHttpsMetadata = false;
                 }
             });
+
+            services.AddScoped<CityService>();
+            services.AddScoped<RecordService>();
         }
 
         public void Configure(IApplicationBuilder app)

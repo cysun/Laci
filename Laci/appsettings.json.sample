@@ -3,6 +3,7 @@
     "DefaultConnection": "Host=localhost;Database=laci;Username=cysun;Password=abcd"
   },
   "OIDC": {
+    "Authority": "http://localhost:5000",
     "ClientId": "laci.local",
     "ClientSecret": "abcd"
   },
