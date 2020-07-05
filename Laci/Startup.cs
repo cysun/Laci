@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Laci.Services;
@@ -26,9 +27,30 @@ namespace Laci
 
         public void ConfigureServices(IServiceCollection services)
         {
+            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllersWithViews();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = "Cookies";
+                options.DefaultChallengeScheme = "oidc";
+            })
+            .AddCookie("Cookies")
+            .AddOpenIdConnect("oidc", options =>
+            {
+                options.Authority = "http://localhost:5000";
+                options.ClientId = Configuration["OIDC:ClientId"];
+                options.ClientSecret = Configuration["OIDC:ClientSecret"];
+                options.ResponseType = "code";
+                options.SaveTokens = true;
+                if (Environment.IsDevelopment())
+                {
+                    options.RequireHttpsMetadata = false;
+                }
+            });
         }
 
         public void Configure(IApplicationBuilder app)
@@ -45,6 +67,7 @@ namespace Laci
             app.UseSerilogRequestLogging();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
