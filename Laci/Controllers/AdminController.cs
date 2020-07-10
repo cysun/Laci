@@ -14,7 +14,7 @@ using Npgsql.TypeHandlers.GeometricHandlers;
 
 namespace Laci.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "IsAdmin")]
     public class AdminController : Controller
     {
         private readonly CityService _cityService;
@@ -103,8 +103,7 @@ namespace Laci.Controllers
             _recordService.SaveChanges();
 
             _logger.LogInformation("{username} uploaded {file} for {date}",
-                User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                file.FileName, date.Date);
+                User.FindFirstValue("name"), file.FileName, date.Date);
             return RedirectToAction("Index");
         }
     }

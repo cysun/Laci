@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Laci.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -52,10 +53,26 @@ namespace Laci
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
                 options.ClaimActions.MapUniqueJsonKey("laci_admin", "laci_admin");
+
+                options.Events = new OpenIdConnectEvents
+                {
+                    OnRemoteFailure = context =>
+                    {
+                        context.Response.Redirect("/");
+                        context.HandleResponse();
+                        return Task.FromResult(0);
+                    }
+                };
+
                 if (Environment.IsDevelopment())
                 {
                     options.RequireHttpsMetadata = false;
                 }
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("IsAdmin", policy => policy.RequireClaim("laci_admin", "true"));
             });
 
             services.AddScoped<CityService>();
