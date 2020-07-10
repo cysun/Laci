@@ -1,4 +1,8 @@
 {
+  "Application": {
+    "Url": "http://localhost:5002",
+    "PathBase": "/"
+  },
   "ConnectionStrings": {
     "DefaultConnection": "Host=localhost;Database=laci;Username=cysun;Password=abcd"
   },
