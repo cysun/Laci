@@ -79,7 +79,11 @@ namespace Laci.Controllers
                 }
 
                 if (columnIndexes.ContainsKey("Population"))
-                    city.Population = int.Parse(words[columnIndexes["Population"]]);
+                {
+                    int population;
+                    if (int.TryParse(words[columnIndexes["Population"]], out population))
+                        city.Population = population;
+                }
 
                 var record = _recordService.GetRecord(city.Id, date);
                 if (record == null)
