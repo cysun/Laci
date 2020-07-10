@@ -6,26 +6,24 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Laci.Models;
+using Laci.Services;
 
 namespace Laci.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly CityService _cityService;
+        private readonly RecordService _recordService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(CityService cityService, RecordService recordService)
         {
-            _logger = logger;
+            _cityService = cityService;
+            _recordService = recordService;
         }
 
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            return View(_cityService.GetCities());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

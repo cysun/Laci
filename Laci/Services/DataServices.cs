@@ -19,7 +19,7 @@ namespace Laci.Services
 
         public List<City> GetCities()
         {
-            return _db.Cities.ToList();
+            return _db.Cities.OrderBy(c => c.Name).ToList();
         }
 
         public City GetCity(string name)
@@ -45,6 +45,11 @@ namespace Laci.Services
         {
             return _db.Records.Where(r => r.CityId == cityId && r.Date.Date == date.Date)
                 .SingleOrDefault();
+        }
+
+        public List<Record> GetRecords(int cityId)
+        {
+            return _db.Records.Where(r => r.CityId == cityId).OrderBy(r => r.Date).ToList();
         }
 
         public void AddRecord(Record record) => _db.Records.Add(record);
