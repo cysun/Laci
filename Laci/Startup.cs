@@ -4,12 +4,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Laci.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using Serilog;
 
 namespace Laci
@@ -45,7 +47,11 @@ namespace Laci
                 options.ClientId = Configuration["OIDC:ClientId"];
                 options.ClientSecret = Configuration["OIDC:ClientSecret"];
                 options.ResponseType = "code";
+                options.Scope.Add("email");
+                options.Scope.Add("laci_claims");
                 options.SaveTokens = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.ClaimActions.MapUniqueJsonKey("laci_admin", "laci_admin");
                 if (Environment.IsDevelopment())
                 {
                     options.RequireHttpsMetadata = false;
@@ -61,6 +67,7 @@ namespace Laci
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                IdentityModelEventSource.ShowPII = true;
             }
             else
             {
