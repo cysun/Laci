@@ -78,7 +78,7 @@
         }
         function getData(cityId) {
             $.ajax({
-                url: `api/cities/${cityId}/records`,
+                url: `@Context.Request.PathBase/api/cities/${cityId}/records`,
                 success: function (data) {
                     labels = data.map(r => (new Date(r.date)).toLocaleDateString());
                     series = {
