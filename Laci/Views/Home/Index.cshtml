@@ -25,11 +25,24 @@
     </div>
     <div class="car-body">
         <div class="ct-chart bg-white"></div>
+        <table id="table" class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Cases</th>
+                    <th scope="col">Deaths</th>
+                    <th scope="col">Tests</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
 </div>
 
 @section Scripts{
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
     <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
     <script>
         var chart;
@@ -44,7 +57,6 @@
                 labels,
                 series: [series[$("#types").val()]]
             };
-            console.log(data);
             if (chart) chart.update(data);
             else {
                 chart = new Chartist.Line('.ct-chart', data, {
@@ -58,6 +70,11 @@
                 $("#types").prop("disabled", false);
                 $("#types").selectpicker("refresh");
             }
+            $("#table > tbody").empty();
+            for (var i = labels.length - 1; i >= 0; --i)
+                $("table > tbody").append("<tr><td>" + labels[i] + "</td><td>" + series.Cases[i] + "</td><td>"
+                    + series.Deaths[i] + "</td><td>" + series.Tests[i] + "</td></tr>");
+            $("#table").show();
         }
         function getData(cityId) {
             $.ajax({
@@ -76,7 +93,8 @@
         $(function () {
             $("#types").prop("disabled", true);
             $("#types").selectpicker("refresh");
-            var cityId = localStorage.getItem("cityId");
+            $("#table").hide();
+            var cityId = Cookies.get("cityId");
             if (cityId) {
                 $("#cities").selectpicker("val", cityId);
                 getData(cityId);
@@ -84,7 +102,7 @@
             $("#cities").change(function () {
                 cityId = $("#cities").val();
                 if (cityId) {
-                    localStorage.setItem("cityId", cityId);
+                    Cookies.set("cityId", cityId, { expires: 14 });
                     getData(cityId);
                 }
             });
