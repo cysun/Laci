@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Laci.Models;
 using Laci.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -78,6 +80,8 @@ namespace Laci
 
             services.AddScoped<CityService>();
             services.AddScoped<RecordService>();
+
+            services.AddAutoMapper(config => config.CreateMap<Record, RecordViewModel>());
         }
 
         public void Configure(IApplicationBuilder app)

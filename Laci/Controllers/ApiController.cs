@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Laci.Models;
 using Laci.Services;
 using Microsoft.AspNetCore.Http;
@@ -15,10 +16,13 @@ namespace Laci.Controllers
         private readonly CityService _cityService;
         private readonly RecordService _recordService;
 
-        public ApiController(CityService cityService, RecordService recordService)
+        private readonly IMapper _mapper;
+
+        public ApiController(CityService cityService, RecordService recordService, IMapper mapper)
         {
             _cityService = cityService;
             _recordService = recordService;
+            _mapper = mapper;
         }
 
         [HttpGet("api/cities")]
@@ -28,9 +32,19 @@ namespace Laci.Controllers
         }
 
         [HttpGet("api/cities/{cityId}/records")]
-        public List<Record> CityRecords(int cityId)
+        public List<RecordViewModel> CityRecords(int cityId)
         {
-            return _recordService.GetRecords(cityId);
+            var records = _recordService.GetRecords(cityId)
+                .Select(r => _mapper.Map<RecordViewModel>(r)).ToList();
+
+            records[0].NewCases = 0;
+            for (int i = 1; i < records.Count; ++i)
+            {
+                records[i].NewCases = (records[i].Cases - records[i - 1].Cases) /
+                    (records[i].Date - records[i - 1].Date).Days;
+            }
+
+            return records;
         }
     }
 }
