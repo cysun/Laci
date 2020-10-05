@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Laci.Models;
+using Laci.Security;
 using Laci.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +15,7 @@ using Npgsql.TypeHandlers.GeometricHandlers;
 
 namespace Laci.Controllers
 {
-    [Authorize(Policy = "IsAdmin")]
+    [Authorize(Policy = Policy.IsAdministrator)]
     public class AdminController : Controller
     {
         private readonly CityService _cityService;

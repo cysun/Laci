@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Laci.Models;
+using Laci.Security;
 using Laci.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -52,10 +53,10 @@ namespace Laci
                 options.ClientSecret = Configuration["OIDC:ClientSecret"];
                 options.ResponseType = "code";
                 options.Scope.Add("email");
-                options.Scope.Add("laci_claims");
+                options.Scope.Add("cysun-laci-claims");
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
-                options.ClaimActions.MapUniqueJsonKey("laci_admin", "laci_admin");
+                options.ClaimActions.MapUniqueJsonKey(LaciClaimTypes.IsAdministrator, "cysun-laci-admin");
 
                 options.Events = new OpenIdConnectEvents
                 {
@@ -75,7 +76,8 @@ namespace Laci
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("IsAdmin", policy => policy.RequireClaim("laci_admin", "true"));
+                options.AddPolicy(Policy.IsAdministrator,
+                    policy => policy.RequireClaim(LaciClaimTypes.IsAdministrator, true.ToString()));
             });
 
             services.AddScoped<CityService>();
