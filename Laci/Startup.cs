@@ -45,7 +45,10 @@ namespace Laci
                 options.DefaultScheme = "Cookies";
                 options.DefaultChallengeScheme = "oidc";
             })
-            .AddCookie("Cookies")
+            .AddCookie(opt =>
+            {
+                opt.Cookie.MaxAge = TimeSpan.FromDays(90);
+            })
             .AddOpenIdConnect("oidc", options =>
             {
                 options.Authority = Configuration["OIDC:Authority"];
