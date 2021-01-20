@@ -13,7 +13,7 @@
             <option></option>
             @foreach (var city in Model)
             {
-                <option value="@city.Id">@city.Name</option>
+                <option data-population="@city.Population" value="@city.Id">@city.Name</option>
             }
         </select>
         <select id="types" class="selectpicker" data-style="btn-secondary">
@@ -22,7 +22,7 @@
             <option>Deaths</option>
             <option>Tests</option>
         </select>
-        <span id="date-range"></span>
+        <span id="population"></span>
     </div>
     <div class="car-body">
         <div class="ct-chart bg-white"></div>
@@ -92,6 +92,8 @@
                         Tests: data.map(r => r.tests)
                     };
                     drawChart();
+                    var population = parseInt($(`option[value='${cityId}']`).attr("data-population")).toLocaleString();
+                    $("#population").html(`Population: <span class='ml-2'>${population}</span>`).show();
                 }
             });
         }
@@ -99,6 +101,7 @@
             $("#types").prop("disabled", true);
             $("#types").selectpicker("refresh");
             $("#table").hide();
+            $("#population").hide();
             var cityId = Cookies.get("cityId");
             if (cityId) {
                 $("#cities").selectpicker("val", cityId);
